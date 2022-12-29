@@ -1,0 +1,45 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title><u>Registrar puntos</u></mat-card-title>
+    <mat-form-field appearance="fill">
+      <mat-label>Selecciona un modo</mat-label>
+      <mat-select [(ngModel)]="formMode" (selectionChange)="onChangeFormMode($event)">
+        <mat-option value="markert">Marcadores</mat-option>
+        <mat-option value="polygon">Poligonos</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-header>
+  <br />
+  <mat-card-content>
+    <div id="form-container">
+      <mat-form-field class="example-form-field" appearance="outline">
+        <mat-label>Longitud</mat-label>
+        <input
+          matInput
+          type="number"
+          [value]="coordinates.lng"
+          [(ngModel)]="coordinates.lng"
+        />
+      </mat-form-field>
+      <mat-form-field class="example-form-field" appearance="outline">
+        <mat-label>Latitud</mat-label>
+        <input
+          matInput
+          type="number"
+          [value]="coordinates.lat"
+          [(ngModel)]="coordinates.lat"
+        />
+      </mat-form-field>
+    </div>
+
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-button (click)="handleSaveCoordinates()">Guardar</button>
+  </mat-card-actions>
+</mat-card>
+<div id="container-markerts">
+  <pre *ngFor="let markert of markerts">
+    {{markert | json}}
+  </pre>
+
+</div>
