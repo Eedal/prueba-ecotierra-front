@@ -10,6 +10,14 @@ import { Polygon } from '../interfaces/polygon';
 })
 export class MapService {
   constructor(private http: HttpClient) {}
+  
+  getPolygons(): Observable<Polygon[]> {
+    return this.http.get<Polygon[]>(`${environment.apiMapUrl}/polygons`);
+  }
+
+  getMarkerts(): Observable<Map[]> {
+    return this.http.get<Map[]>(`${environment.apiMapUrl}/markerts`);
+  }
 
   createMarker(marker: Map): Observable<Map> {
     return this.http.post<Map>(`${environment.apiMapUrl}/markerts`, marker);
@@ -22,14 +30,7 @@ export class MapService {
     );
   }
 
-  createPolygon(markerts: {
-    name: string;
-    markerts: Map[];
-  }): Observable<Map[]> {
+  createPolygon(markerts: Map[]): Observable<Map[]> {
     return this.http.post<Map[]>(`${environment.apiMapUrl}/polygons`, markerts);
-  }
-
-  getPolygons(): Observable<Polygon[]> {
-    return this.http.get<Polygon[]>('http://127.0.0.1:8000/api/polygons');
   }
 }

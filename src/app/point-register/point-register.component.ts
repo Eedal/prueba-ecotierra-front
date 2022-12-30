@@ -1,10 +1,7 @@
 import {
   Component,
-  Input,
-  OnChanges,
   OnInit,
   OnDestroy,
-  SimpleChanges,
   Output,
   EventEmitter,
 } from '@angular/core';
@@ -14,90 +11,65 @@ import { Map } from '../interfaces/map';
 import { CoordinatesChangesService } from '../services/coordinates-changes.service';
 import { MapService } from '../services/map.service';
 
+const INITIAL_VALUE_COORDINATE = {
+  lat: 0,
+  lng: 0,
+}
+
 @Component({
   selector: 'app-point-register',
   templateUrl: './point-register.component.html',
   styleUrls: ['./point-register.component.css'],
 })
 export class PointRegisterComponent implements OnInit, OnDestroy {
+  changeCoordinateEmitter!: Subscription;
+
+  coordinates: Map = INITIAL_VALUE_COORDINATE;
+  formLoading = false;
   constructor(
     private coordinatesChangesService: CoordinatesChangesService,
     private mapService: MapService
   ) {}
-  changeEmitter!: Subscription;
-
-  formMode: 'markert' | 'polygon' = 'markert';
-
-  markerts: Map[] = [];
-  @Output() mensajeEnviado = new EventEmitter<string>();
-
-  coordinates: Map = {
-    lat: 0,
-    lng: 0,
-  };
 
   ngOnInit(): void {
-    this.changeEmitter =
+    this.changeCoordinateEmitter =
       this.coordinatesChangesService.emitChangeCoordinates.subscribe(
         (value) => {
           this.coordinates = value;
-          if (this.formMode === 'polygon') {
-            this.handleAddCoordinates();
-          }
+        }
+      );
+
+      this.coordinatesChangesService.formLoading.subscribe(
+        (value) => {
+          this.formLoading = value;
         }
       );
   }
+
   ngOnDestroy(): void {
-    this.changeEmitter.unsubscribe();
+    this.changeCoordinateEmitter.unsubscribe();
   }
 
-  onChangeFormMode(e: any): void {
-    if (this.markerts.length > 0) {
-      alert('Hey, no alcanzaste a terminar poligono');
-      this.markerts = [];
-      return;
-    }
-    this.coordinatesChangesService.emitChangeFormMode.emit(e.value);
+  reset(): void {
+    this.coordinates = INITIAL_VALUE_COORDINATE;
   }
 
-  handleAddCoordinates(): void {
-    this.markerts.push(this.coordinates);
-    this.coordinates = {
-      lat: 0,
-      lng: 0,
-    };
-  }
   handleSaveCoordinates(): void {
-    if (this.formMode === 'markert') {
-      if (this.coordinates.id) {
-        this.mapService.updateMarker(this.coordinates).subscribe((response) => {
-          this.coordinatesChangesService.sendCoordinatesFromForm.emit(response);
-        });
-      } else {
-        this.mapService.createMarker(this.coordinates).subscribe((response) => {
-          this.coordinatesChangesService.sendCoordinatesFromForm.emit(response);
-        });
-      }
-    }
-    if (this.formMode === 'polygon') {
-      if (this.markerts.length < 3) {
-        alert(
-          `Un poligono necesita al menos 3 puntos, te falta agregar ${
-            3 - this.markerts.length
-          }`
-        );
-      } else {
-        const payloadCreatePolygon = {
-          name: 'Poligono #x',
-          markerts: this.markerts,
-        };
-        this.mapService
-          .createPolygon(payloadCreatePolygon)
-          .subscribe((response) => {
-            this.coordinatesChangesService.sendPolygonFromForm.emit(response);
-            this.markerts = [];
-          });
-      }
+    if (this.coordinates.id) {
+      this.coordinatesChangesService.formLoading.emit(true);
+      this.mapService.updateMarker(this.coordinates).subscribe((response) => {
+        this.coordinatesChangesService.formLoading.emit(false);
+        alert('Marcador actualizado en la db')
+        this.reset();
+      });
+    } else {
+      this.coordinatesChangesService.formLoading.emit(true);
+      this.mapService.createMarker(this.coordinates).subscribe((response) => {
+        this.coordinatesChangesService.formLoading.emit(false);
+        alert('Marcador creado en la db')
+        this.reset()
+        this.coordinatesChangesService.sendCoordinatesFromForm.emit(response);
+      });
     }
   }
 }

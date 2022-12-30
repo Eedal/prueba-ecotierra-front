@@ -1,13 +1,6 @@
 <mat-card>
   <mat-card-header>
     <mat-card-title><u>Registrar puntos</u></mat-card-title>
-    <mat-form-field appearance="fill">
-      <mat-label>Selecciona un modo</mat-label>
-      <mat-select [(ngModel)]="formMode" (selectionChange)="onChangeFormMode($event)">
-        <mat-option value="markert">Marcadores</mat-option>
-        <mat-option value="polygon">Poligonos</mat-option>
-      </mat-select>
-    </mat-form-field>
   </mat-card-header>
   <br />
   <mat-card-content>
@@ -31,15 +24,9 @@
         />
       </mat-form-field>
     </div>
-
   </mat-card-content>
   <mat-card-actions align="end">
-    <button mat-button (click)="handleSaveCoordinates()">Guardar</button>
+    <h1 *ngIf="formLoading === true">Cargando</h1>
+    <button mat-button (click)="handleSaveCoordinates()" *ngIf="formLoading === false">Guardar</button>
   </mat-card-actions>
 </mat-card>
-<div id="container-markerts">
-  <pre *ngFor="let markert of markerts">
-    {{markert | json}}
-  </pre>
-
-</div>

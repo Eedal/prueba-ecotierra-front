@@ -7,10 +7,7 @@ import { Map } from '../interfaces/map';
 export class CoordinatesChangesService {
   @Output() emitChangeCoordinates: EventEmitter<Map> = new EventEmitter();
   @Output() sendCoordinatesFromForm: EventEmitter<Map> = new EventEmitter();
-  @Output() sendPolygonFromForm: EventEmitter<Map[]> = new EventEmitter();
-  @Output() emitChangeFormMode: EventEmitter<'markert' | 'polygon'> = new EventEmitter();
-  
-  
+  @Output() formLoading: EventEmitter<boolean> = new EventEmitter();
 
   constructor() {}
 }
