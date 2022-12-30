@@ -1,0 +1,13 @@
+<li *ngIf="menu.submenu.length === 0">
+    <div >
+        {{menu.name}}    
+    </div>
+    
+</li>
+
+<li *ngIf="menu.submenu.length > 0">
+    {{menu.name}}    
+    <ul>
+        <app-menu-item *ngFor="let item of menu.submenu" [menu]="item"></app-menu-item>
+    </ul>
+</li>

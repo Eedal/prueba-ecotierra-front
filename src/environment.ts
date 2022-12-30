@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiMapUrl: "http://127.0.0.1:8000/api"
+  apiMapUrl: "https://back-ecotierra.gomovil.net/api"
 };
